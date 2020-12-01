@@ -1,27 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import {useSelector} from 'react-redux'
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from 'react-redux'
+import store from './src/store'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import Home from './src/screens/Home'
+import Finish from './src/screens/Finish';
+import Game from './src/screens/Game';
 
 export default function App() {
-  const board = useSelector((state) => state.board)
-   
+  const Stack = createStackNavigator()
   return (
-    <View>
-      <View style={{flexDirection: 'row', marginTop:100, marginLeft:20}}>
-        <View style={{width: 50, height: 50, backgroundColor:'powderblue'}}></View>
-        <View style={{width: 50, height: 50, backgroundColor:'skyblue'}}></View>
-      </View>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <Provider store={ store }>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Home}/>
+          <Stack.Screen name="Game" component={Game}/>
+          <Stack.Screen name="Finish" component={Finish}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,7 +1,8 @@
 import {createStore} from 'redux'
 
 const initialState = {
-  board: []
+  board: [],
+  user: ''
 }
 
 function reducer (state=initialState, action) {
@@ -9,6 +10,8 @@ function reducer (state=initialState, action) {
     case 'FETCH_BOARD':
       const fetchBoard = state.board.push(action.payload.data)
       return {...state, board: fetchBoard}
+    case 'SET_NAME':
+      return {...state, user: action.payload.inputName}
     default:
       return state
   }
