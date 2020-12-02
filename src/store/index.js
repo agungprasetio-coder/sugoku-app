@@ -4,7 +4,7 @@ import thunk from 'redux-thunk'
 const initialState = {
   board: [],
   user: '',
-  difficulty: '',
+  difficulty: 'easy',
   status: ''
 }
 
