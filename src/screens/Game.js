@@ -64,7 +64,7 @@ export default function Game({navigation, route}) {
       )
     } else {
       return (
-        <View style={styles.col}>
+        <View style={styles.col2}>
           <TextInput keyboardType='numeric' onChangeText={text => handleInputCol(text)}/>
         </View>
       )
@@ -138,6 +138,14 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     backgroundColor: 'skyblue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1
+  },
+  col2: {
+    height: 30,
+    width: 30,
+    backgroundColor: 'powderblue',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1
