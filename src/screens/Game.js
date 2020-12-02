@@ -1,29 +1,61 @@
-import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { Alert, Button, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { fetchBoard, validateBoard } from '../store'
 
-export default function Game(props) { 
-  const board = [
-    [0,1,2,3,4,5,6,7,8],
-    [1,0,0,0,0,0,0,0,0],
-    [2,0,0,0,0,0,0,0,0],
-    [3,0,0,0,0,0,0,0,0],
-    [4,0,0,0,0,0,0,0,0],
-    [5,0,0,0,0,0,0,0,0],
-    [6,0,0,0,0,0,0,0,0],
-    [7,0,0,0,0,0,0,0,0],
-    [8,0,0,0,0,0,0,0,0]
-  ]
+export default function Game(props) {
+  const user = useSelector((state) => state.user)
+  const board = useSelector((state) => state.board)
+  const status = useSelector((state) => state.status)
+  console.log(board, '<<< isi board di redux')
+  const dispatch = useDispatch()
 
-  function onPress() {
-    props.navigation.navigate('Finish')
+  function handleValidate() {
+    dispatch(validateBoard())
+    if(status === 'solved') {
+      props.navigation.navigate('Finish')
+    } else {
+      <Alert>{alert('unsolved')}</Alert>
+    }
+  }
+
+  function handleAutoSolve() {
+
+  }
+
+  function handleNewGame() {
+    dispatch(fetchBoard())
+  }
+
+  function handleGiveUp() {
+    props.navigation.navigate('Finish', {user})
+  }
+
+  function handleInputCol(text) {
+    const inputCol = text
+
+    console.log(inputCol, '<<<< input col')
   }
   
+  useEffect(() => {
+    dispatch(fetchBoard())
+  }, [])
+  
   function Cols({colValue}) {
-    return (
-      <View style={styles.col}>
-        <Text>{colValue}</Text>
-      </View>
-    )
+    console.log(colValue, '<<<< colValue')
+    if(colValue > 0) {
+      return (
+        <View style={styles.col}>
+          <Text>{colValue}</Text>
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.col}>
+          <TextInput keyboardType='numeric' onChangeText={text => handleInputCol(text)}/>
+        </View>
+      )
+    }
   }
 
   function Rows({cols}) {
@@ -47,16 +79,16 @@ export default function Game(props) {
       <View style={styles.bottom_container}>
         <View style={styles.grid}>
           <View style={styles.custom_button}>
-            <Button title="VALIDATE"></Button>
+            <Button title="VALIDATE" onPress={handleValidate}></Button>
           </View>
           <View style={styles.custom_button}>
             <Button title="AUTO SOLVE"></Button>
           </View>
           <View style={styles.custom_button}>
-            <Button title="GIVE UP" onPress={onPress}></Button>
+            <Button title="GIVE UP" onPress={handleGiveUp}/>
           </View>
           <View style={styles.custom_button}>
-            <Button title="NEW GAME"></Button>
+            <Button title="NEW GAME" onPress={handleNewGame}/>
           </View>
         </View>
       </View>
@@ -93,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'skyblue',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0
+    borderWidth: 1
   },
   grid: {
     flex: 0.7,
