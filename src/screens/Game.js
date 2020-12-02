@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { Alert, Button, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import { fetchBoard, validateBoard } from '../store'
+import { Alert, Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { fetchBoard, validateBoard, solveBoard } from '../store'
 
 export default function Game(props) {
   const user = useSelector((state) => state.user)
@@ -11,16 +11,20 @@ export default function Game(props) {
   const dispatch = useDispatch()
 
   function handleValidate() {
-    dispatch(validateBoard())
+    dispatch(validateBoard(board))
+    console.log(status, '<<<< status di redux')
     if(status === 'solved') {
-      props.navigation.navigate('Finish')
+      props.navigation.navigate('Finish', {
+        image: require('../images/checked.png'),
+        message: `Congratulations on your great win, ${user}!`
+      })
     } else {
       <Alert>{alert('unsolved')}</Alert>
     }
   }
 
   function handleAutoSolve() {
-
+    dispatch(solveBoard())
   }
 
   function handleNewGame() {
@@ -28,21 +32,29 @@ export default function Game(props) {
   }
 
   function handleGiveUp() {
-    props.navigation.navigate('Finish', {user})
-  }
-
-  function handleInputCol(text) {
-    const inputCol = text
-
-    console.log(inputCol, '<<<< input col')
+    props.navigation.navigate('Finish', {
+      image: require('../images/cry.png'),
+      message: `Too bad, ${user}! Please try again later.`
+    })
   }
   
   useEffect(() => {
     dispatch(fetchBoard())
   }, [])
   
-  function Cols({colValue}) {
-    console.log(colValue, '<<<< colValue')
+  function Cols({colValue, indexCol, indexRow}) {
+    function handleInputCol(text) {
+      const newBoard = board.map(el => el)
+      newBoard[indexRow][indexCol] = +text
+      dispatch({
+        type: 'SET_BOARD',
+        payload: {
+          newBoard
+        }
+      })
+      console.log(newBoard, '<<<< newBoard')
+    }
+    //console.log(colValue, index, indexRow, '<<<< colValue, indexCol, indexRow')
     if(colValue > 0) {
       return (
         <View style={styles.col}>
@@ -58,11 +70,11 @@ export default function Game(props) {
     }
   }
 
-  function Rows({cols}) {
+  function Rows({cols, indexRow}) {
     return (
       <View style={styles.row}>
         {cols.map((col, i) => (
-          <Cols key={i} colValue={col}/>
+          <Cols key={i} indexRow={indexRow} indexCol={i} colValue={col}/>
         ))}
       </View>
     )
@@ -70,10 +82,12 @@ export default function Game(props) {
 
   return (
     <>
-      <View style={styles.top_container}></View>
+      <View style={styles.top_container}>
+        <Text style={styles.text}>SUDOKU</Text>
+      </View>
       <View style={styles.middle_container}>
         {board.map((row, i) => (
-          <Rows key={i} cols={row}/>
+          <Rows key={i} indexRow={i} cols={row}/>
         ))}
       </View>
       <View style={styles.bottom_container}>
@@ -82,7 +96,7 @@ export default function Game(props) {
             <Button title="VALIDATE" onPress={handleValidate}></Button>
           </View>
           <View style={styles.custom_button}>
-            <Button title="AUTO SOLVE"></Button>
+            <Button title="AUTO SOLVE" onPress={handleAutoSolve}></Button>
           </View>
           <View style={styles.custom_button}>
             <Button title="GIVE UP" onPress={handleGiveUp}/>
@@ -138,5 +152,10 @@ const styles = StyleSheet.create({
     width: 100,
     marginTop: 10,
     marginBottom: 10
+  },
+  text: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: 'skyblue'
   }
 })

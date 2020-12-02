@@ -1,11 +1,14 @@
 import React from 'react';
+import { useDispatch } from 'react-redux'
+import { fetchBoard } from '../store'
 import { Button, Image, StyleSheet, Text, View } from 'react-native'
 
 export default function Finish({route, navigation}) {
-  const { user } = route.params
-
+  const dispatch = useDispatch()
+  const { image, message } = route.params
   function onPress() {
     navigation.navigate('Game')
+    dispatch(fetchBoard())
   }
 
   return (
@@ -13,9 +16,9 @@ export default function Finish({route, navigation}) {
       <Image
         style={styles.image} 
         source={
-          require('../images/cry.png')
+          image
         }/>
-      <Text style={styles.message}>Too bad, {user}! Please try again later.</Text>
+      <Text style={styles.message}>{message}</Text>
       <Button title="Start New Game" onPress={onPress}/>
     </View>
   )
