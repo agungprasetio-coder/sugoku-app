@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Alert, Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { fetchBoard, validateBoard, solveBoard } from '../store'
 
-export default function Game(props) {
+export default function Game({navigation, route}) {
   const user = useSelector((state) => state.user)
   const board = useSelector((state) => state.board)
   const status = useSelector((state) => state.status)
+  const { difficulty } = route.params
   console.log(board, '<<< isi board di redux')
   const dispatch = useDispatch()
 
@@ -14,7 +15,7 @@ export default function Game(props) {
     dispatch(validateBoard(board))
     console.log(status, '<<<< status di redux')
     if(status === 'solved') {
-      props.navigation.navigate('Finish', {
+      navigation.navigate('Finish', {
         image: require('../images/checked.png'),
         message: `Congratulations on your great win, ${user}!`
       })
@@ -28,18 +29,18 @@ export default function Game(props) {
   }
 
   function handleNewGame() {
-    dispatch(fetchBoard())
+    dispatch(fetchBoard(difficulty))
   }
 
   function handleGiveUp() {
-    props.navigation.navigate('Finish', {
+    navigation.navigate('Finish', {
       image: require('../images/cry.png'),
       message: `Too bad, ${user}! Please try again later.`
     })
   }
   
   useEffect(() => {
-    dispatch(fetchBoard())
+    dispatch(fetchBoard(difficulty))
   }, [])
   
   function Cols({colValue, indexCol, indexRow}) {

@@ -7,8 +7,7 @@ export default function Finish({route, navigation}) {
   const dispatch = useDispatch()
   const { image, message } = route.params
   function onPress() {
-    navigation.navigate('Game')
-    dispatch(fetchBoard())
+    navigation.navigate('Home')
   }
 
   return (

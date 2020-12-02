@@ -4,12 +4,13 @@ import thunk from 'redux-thunk'
 const initialState = {
   board: [],
   user: '',
+  difficulty: '',
   status: ''
 }
 
-export function fetchBoard() {
+export function fetchBoard(difficulty) {
   return (dispatch) => (
-    fetch('https://sugoku.herokuapp.com/board?difficulty=hard')
+    fetch(`https://sugoku.herokuapp.com/board?difficulty=${difficulty}`)
       .then(res => res.json())
       .then(data => {
         dispatch({
@@ -96,6 +97,8 @@ function reducer (state=initialState, action) {
     }
     case 'SET_NAME':
       return {...state, user: action.payload.inputName}
+    case 'SET_DIFFICULTY':
+      return {...state, difficulty: action.payload.value}
     default:
       return state
   }
